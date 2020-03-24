@@ -16,7 +16,7 @@ Next, install the dependencies for the project using the following command:
 
  then
 
-`$yarn start`
+`$yarn dev`
 
 Runs the app in the development mode.
 Open [localhost](http://localhost:3000) to view it in the browser.
