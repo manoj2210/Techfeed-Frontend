@@ -1,14 +1,14 @@
-# Scaffold Repository for Create-React-App and TailwindCSS
+# TechFeed 
 
 ## Installation
 
 To install, clone the repository to your preferred location on your machine:
 
-`git clone https://github.com/Jolaolu/react-tailwind-demo.git`
+`git clone https://github.com/manoj2210/Techfeed-Frontend.git`
 
 Next, cd to the directory of the project.
 
-`$ cd react-tailwind-demo`
+`$ cd Techfeed-Frontend`
 
 Next, install the dependencies for the project using the following command:
 
