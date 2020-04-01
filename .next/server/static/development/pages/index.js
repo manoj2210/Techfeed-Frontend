@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -1795,6 +1795,95 @@ module.exports = __webpack_require__(/*! ./dist/client/link */ "./node_modules/n
 
 /***/ }),
 
+/***/ "./services/login_service.js":
+/*!***********************************!*\
+  !*** ./services/login_service.js ***!
+  \***********************************/
+/*! exports provided: login */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "login", function() { return login; });
+/* harmony import */ var _rest_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rest_service */ "./services/rest_service.js");
+
+async function login(inputs) {
+  let formBody = [];
+
+  for (let property in inputs) {
+    let encodedKey = encodeURIComponent(property);
+    let encodedValue = encodeURIComponent(inputs[property]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+
+  formBody = formBody.join('&');
+  let res = await Object(_rest_service__WEBPACK_IMPORTED_MODULE_0__["login_call"])('/oauth/token', formBody);
+
+  if (!res.error && !res.access_token) {
+    return {
+      error: 'server',
+      error_description: 'Something went wrong!'
+    };
+  }
+
+  return res;
+}
+
+/***/ }),
+
+/***/ "./services/rest_service.js":
+/*!**********************************!*\
+  !*** ./services/rest_service.js ***!
+  \**********************************/
+/*! exports provided: login_call, post, get */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "login_call", function() { return login_call; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "post", function() { return post; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
+/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! isomorphic-unfetch */ "isomorphic-unfetch");
+/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0__);
+
+const login_call = async (url, data) => {
+  let response = await isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0___default()(`${url}`, {
+    credentials: 'include',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "data": data
+    })
+  });
+  return await response.json();
+};
+const post = async (url, data) => {
+  let response = await isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0___default()("/post", {
+    credentials: 'include',
+    headers: {
+      'path': url,
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: data
+  });
+  return await response.json();
+};
+const get = async url => {
+  let response = await isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_0___default()("/get", {
+    credentials: 'include',
+    headers: {
+      'path': url
+    },
+    method: 'get'
+  });
+  return await response.json();
+};
+
+/***/ }),
+
 /***/ "./src/components/footer.js":
 /*!**********************************!*\
   !*** ./src/components/footer.js ***!
@@ -1806,8 +1895,8 @@ module.exports = __webpack_require__(/*! ./dist/client/link */ "./node_modules/n
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
 
 function Footer() {
   return __jsx("footer", {
@@ -1893,16 +1982,16 @@ function Header() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./header */ "./src/components/header.js");
+/* harmony import */ var _header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./header */ "./src/components/header.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _footer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./footer */ "./src/components/footer.js");
 /* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../styles/index.css */ "./src/styles/index.css");
 /* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_styles_index_css__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! next/head */ "next/head");
 /* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_4__);
+var __jsx = react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement;
 
-var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
 
@@ -1914,12 +2003,12 @@ function Layout(props) {
     suppressHydrationWarning: true
   }, __jsx(next_head__WEBPACK_IMPORTED_MODULE_4___default.a, null, __jsx("title", null, "TechFeed"), __jsx("link", {
     rel: "shortcut icon",
-    href: "/static/favicon.ico"
+    href: "../static/favicon.ico"
   }), __jsx("meta", {
     name: "viewport",
     content: "initial-scale=1.0, width=device-width"
-  })), __jsx(_header__WEBPACK_IMPORTED_MODULE_1__["default"], null), __jsx("main", {
-    className: "bg-white-alt"
+  })), __jsx(_header__WEBPACK_IMPORTED_MODULE_0__["default"], null), __jsx("main", {
+    className: "bg-gray-100"
   }, __jsx("div", {
     className: "container w-full mx-auto pt-20"
   }), props.children), __jsx(_footer__WEBPACK_IMPORTED_MODULE_2__["default"], null));
@@ -1938,18 +2027,100 @@ function Layout(props) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_layout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/layout */ "./src/components/layout.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-var __jsx = react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement;
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _services_login_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/login_service */ "./services/login_service.js");
+/* harmony import */ var _components_layout__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/layout */ "./src/components/layout.js");
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-function index() {
-  return __jsx(_components_layout__WEBPACK_IMPORTED_MODULE_0__["default"], null);
+
+
+function Login() {
+  const initialValues = {
+    username: '',
+    password: '',
+    grant_type: 'password'
+  };
+  const {
+    0: inputs,
+    1: setInputs
+  } = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initialValues);
+  const {
+    0: error,
+    1: setError
+  } = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('');
+
+  const handleSubmit = async e => {
+    e.preventDefault(); // const res = await login(inputs);
+    // if (!!res.error) setError(res.error_description);
+  };
+
+  const handleInputChange = e => {
+    e.persist();
+    setInputs(_objectSpread({}, inputs, {
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  return __jsx(_components_layout__WEBPACK_IMPORTED_MODULE_2__["default"], null, __jsx("div", {
+    className: "mx-auto px-4 sm:px-8 min-h-screen"
+  }, __jsx("div", {
+    className: "py-8 w-full max-w-xs mx-auto"
+  }, __jsx("div", null, __jsx("h2", {
+    className: "text-xl leading-tight text-gray-900"
+  }, "Login")), error ? __jsx("p", {
+    className: "p-3 my-2 text-red-700 bg-red-200"
+  }, "Error: ", error) : null, __jsx("form", {
+    className: "bg-white shadow-md rounded px-8 py-6 pb-8 my-4",
+    onSubmit: handleSubmit
+  }, __jsx("div", {
+    className: "mb-4"
+  }, __jsx("label", {
+    className: "block text-gray-700 text-sm font-bold mb-2",
+    htmlFor: "username"
+  }, "Username"), __jsx("input", {
+    className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline",
+    id: "username",
+    autoComplete: "techFeed-username",
+    type: "text",
+    name: "username",
+    placeholder: "",
+    onChange: handleInputChange,
+    value: inputs.email
+  })), __jsx("div", {
+    className: "mb-6"
+  }, __jsx("label", {
+    className: "block text-gray-700 text-sm font-bold mb-2",
+    htmlFor: "password"
+  }, "Password"), __jsx("input", {
+    className: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline",
+    id: "password",
+    type: "password",
+    autoComplete: "techFeed-password",
+    placeholder: "",
+    name: "password",
+    onChange: handleInputChange,
+    value: inputs.password
+  })), __jsx("div", {
+    className: "flex items-center justify-between"
+  }, __jsx("a", {
+    className: "inline-block align-baseline font-bold text-sm text-gray-500 hover:text-gray-800",
+    href: "#"
+  }, "Forgot Password?"), __jsx("button", {
+    className: "bg-orange-500 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+    type: "submit"
+  }, "Sign In"))))));
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (index);
+/* harmony default export */ __webpack_exports__["default"] = (Login);
 
 /***/ }),
 
@@ -1964,7 +2135,7 @@ function index() {
 
 /***/ }),
 
-/***/ 4:
+/***/ 3:
 /*!**********************************!*\
   !*** multi ./src/pages/index.js ***!
   \**********************************/
@@ -2028,6 +2199,17 @@ module.exports = require("core-js/library/fn/symbol/iterator");
 /***/ (function(module, exports) {
 
 module.exports = require("core-js/library/fn/weak-map");
+
+/***/ }),
+
+/***/ "isomorphic-unfetch":
+/*!*************************************!*\
+  !*** external "isomorphic-unfetch" ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("isomorphic-unfetch");
 
 /***/ }),
 

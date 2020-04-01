@@ -1,10 +1,10 @@
 import { login_call } from './rest_service';
 
 export async function login(inputs) {
-  var formBody = [];
-  for (var property in inputs) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(inputs[property]);
+  let formBody = [];
+  for (let property in inputs) {
+    let encodedKey = encodeURIComponent(property);
+    let encodedValue = encodeURIComponent(inputs[property]);
     formBody.push(encodedKey + '=' + encodedValue);
   }
   formBody = formBody.join('&');

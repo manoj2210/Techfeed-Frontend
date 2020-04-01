@@ -1,54 +1,37 @@
 import fetch from 'isomorphic-unfetch';
 
-export const post = (url, data) => {
-  return fetch(url, {
+export const login_call = async (url, data) => {
+  let response = await fetch(`${url}`, {
+    credentials: 'include',
     method: 'post',
-    body: data
-  })
-    .then(response => {
-      if (response.status == 201)
-        return response.json();
-      else {
-        alert("Bad Request");
-        console.log(response.json());
-        return "ERR";
-      }
-    })
-    .then(message => {
-      if (message != "ERR") {
-        return message;
-      }
-      else {
-        return "ERR"
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"data":data})
+  });
+  return await response.json();
 };
 
-export const get = (url) => {
-  return fetch(url, {
+export const post = async (url, data) => {
+  let response = await fetch("/post", {
+    credentials: 'include',
+    headers: {
+      'path': url,
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: data,
+  });
+  return await response.json();
+};
+
+export const get = async(url) => {
+  let response = await fetch("/get", {
+    credentials: 'include',
+    headers: {
+      'path': url,
+    },
     method: 'get'
-  })
-    .then(response => {
-      if (response.status == 200)
-        return response.json();
-      else {
-        alert("Bad Request");
-        console.log(response.json());
-        return "ERR";
-      }
-    })
-    .then(message => {
-      if (message != "ERR") {
-        return message;
-      }
-      else {
-        return "ERR"
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
+  });
+  return await response.json();
+};
