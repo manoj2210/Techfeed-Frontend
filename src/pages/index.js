@@ -5,7 +5,6 @@ import Layout from '../components/layout';
 
 function Techfeed(){
   return <Layout>
-  <Login />
   <Signup />
   </Layout>
 }
