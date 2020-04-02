@@ -13,7 +13,7 @@ function Layout(props) {
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
             <Header />
-            <main className="bg-gray-100">
+            <main className="bg-gray-200">
                 <div className="container w-full mx-auto pt-20"/>
                 {props.children}
             </main>
