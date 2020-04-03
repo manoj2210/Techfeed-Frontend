@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Layout from '../components/layout';
+import Link from "next/link";
+import fetch from 'isomorphic-unfetch'
+import {useRouter} from "next/router";
 
 function SignUp() {
   const initialValues = {
     name: '',
     rollNo: '',
     class: '',
-    deparetment: '',
+    department: '',
     college: '',
     emailID: '',
     contactNo: '',
@@ -15,39 +18,124 @@ function SignUp() {
     error:''
   };
 
+  const router = useRouter();
+  //Inputs
   const [inputs, setInputs] = useState(initialValues);
   const [error, setError] = useState('');
-  const [validateStudentName,setVaildationName] = useState(false);
+  const [colleges,setColleges]=useState([]);
+  const [departments,setDepartments]=useState([]);
+  const [classes,setClasses]=useState([]);
+  //Validation
+  const [validateStudentName,setValidationName] = useState(false);
   const [validateRollNo,setValidationRollNo] = useState(false);
   const [validateContactNo,setValidationContactNo] = useState(false);
+  const [validateEmailID,setValidationEmailID] = useState(false);
   const [validatePassword,setValidationPassword] = useState(false);
   const [validateConfirmPassword,setValidationConfirmPassword] = useState(false);
   const [isCollegeSelected,setStateCollege] = useState(false);
-  const [isDepartmentSelected,setStateDeparetment] = useState(false);
+  const [isDepartmentSelected,setStateDepartment] = useState(false);
+  const [validateClass,setValidationClass]=useState(false);
 
-  const handleSubmit=(e)=>{
-    //name validation
-    if(initialValues.name===""){
-      //console.log("name is empty");
-      setVaildationName(true);
-    }
-    if(initialValues.rollNo===""){
-      //console.log("roll no is empty");
-      setValidationRollNo(true);
-    }
-    if(initialValues.contactNo==="" || initialValues.contactNo.length!==10){
-      //console.log("contact no is empty");
-      setValidationContactNo(true);
-    }
-    if(initialValues.password==="" || initialValues.password.length!==8){
-      //console.log("password is empty");
-      setValidationPassword(true);
-    }
-    if(initialValues.confirmPassword==="" || initialValues.confirmPassword!==initialValues.password){
-      //console.log("confirm Password is empty");
-      setValidationConfirmPassword(true);
-    }
+  useEffect(() => {
+    fetch(`${process.env.backend_url}/base/getCollege`,{
+       crossDomain: true,
+       credentials: 'include',
+       method: 'get',
+     }).then(res=> {
+      return res.json();
+    }).then(async(r)=>{
+      if(!r.error){
+        await mapColleges(r);
+      }else{
+        setError(r.message);
+      }
+    });
+  }, []);
+
+  const mapColleges=e=>{
+    setColleges(e.map((data, index) => (
+        <option key={index}>{data.Name}</option>
+    )));
   };
+
+  const mapDepartments=e=>{
+    setDepartments(e.map((data, index) => (
+        <option key={index}>{data.Name}</option>
+    )));
+  };
+
+  const mapClasses=e=>{
+    setClasses(e.map((data, index) => (
+        <option key={index}>{data.Name}</option>
+    )));
+  };
+
+  function handleCollegeChange(event) {
+    event.persist();
+    setInputs({
+      ...inputs, [event.target.name]: event.target.value
+    });
+
+    let b=JSON.stringify({
+      "collegeName": event.target.value
+    });
+    fetch(`${process.env.backend_url}/base/getDepartment`,{
+      crossDomain: true,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'post',
+      body:b
+    }).then(res=> {
+      return res.json();
+    }).then(async(r)=>{
+      if(!r.error){
+        await mapDepartments(r);
+        setStateCollege(true);
+        setStateDepartment(false);
+        setError(null);
+      }else{
+        setStateCollege(false);
+        setStateDepartment(false);
+        setError(r.message);
+      }
+    });
+  }
+
+  function handleDepartmentChange(event) {
+
+    event.persist();
+    setInputs({
+      ...inputs, [event.target.name]: event.target.value
+    });
+
+    let b=JSON.stringify({
+      "collegeName":inputs.college,
+      "depName": event.target.value
+    });
+
+    fetch(`${process.env.backend_url}/base/getClass`,{
+      crossDomain: true,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'post',
+      body:b
+    }).then(res=> {
+      return res.json();
+    }).then(async(r)=>{
+      if(!r.error){
+        await mapClasses(r);
+        setStateDepartment(true);
+        setError(null);
+      }else{
+        setError(r.message);
+        setStateDepartment(false);
+      }
+    });
+  }
 
 
   function handleInputChange(event) {
@@ -57,27 +145,83 @@ function SignUp() {
     });
   }
 
-  function handleCollege(event){
-        if(!event.target.value){
-      //console.log("college changed to null");
-      setStateCollege(false);
 
+  const validate=(e)=>{
+    let v=true;
+    if(inputs.name===""){
+      //console.log("name is empty");
+      setValidationName(true);
+      v=false;
+    } else {
+      setValidationName(false);
     }
-    else{
-      setStateCollege(true);
+    if(inputs.rollNo===""){
+      //console.log("roll no is empty");
+      setValidationRollNo(true);
+      v=false;
+    }else {
+      setValidationRollNo(false);
     }
-  }
+    if(inputs.emailID===""){
+      //console.log("roll no is empty");
+      setValidationEmailID(true);
+      v=false;
+    }else {
+      setValidationEmailID(false);
+    }
+    if(inputs.contactNo==="" || inputs.contactNo.length!==10){
+      //console.log("contact no is empty");
+      setValidationContactNo(true);
+      v=false;
+    }else{
+      setValidationContactNo(false);
+    }
+    if(inputs.password==="" || inputs.password.length<8){
+      //console.log("password is empty");
+      setValidationPassword(true);
+      v=false;
+    }else{
+      setValidationPassword(false);
+    }
+    if(inputs.confirmPassword==="" || inputs.confirmPassword!==inputs.password){
+      //console.log("confirm Password is empty");
+      setValidationConfirmPassword(true);
+      v=false;
+    }else {
+      setValidationConfirmPassword(false);
+    }
+    if(inputs.class ===""||inputs.class ===" "){
+      setValidationClass(true);
+      v=false;
+    }else {
+      setValidationClass(false);
+    }
+    return v;
+  };
+  const handleSubmit=(e)=>{
+    let v=validate();
+    if(v===true){
+      fetch(`${process.env.backend_url}/signUp/addStudent`,{
+        crossDomain: true,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'post',
+        body:JSON.stringify(inputs)
+      }).then(res=> {
+        return res.json();
+      }).then((r)=>{
+        if(!r.error){
+          router.push('/login');
+        }else{
+          setError(r.message);
+        }
+      });
+    }
+  };
 
-  function handleDepartment(event){
 
-    if(!event.target.value){
-      setStateDeparetment(false);
-
-    }
-    else{
-      setStateDeparetment(true);
-    }
-  }
   return (
       <Layout>
         <div className="mx-auto px-4 sm:px-8 min-h-screen">
@@ -91,11 +235,11 @@ function SignUp() {
             <form className="w-full max-w-lg mx-auto my-4 bg-white p-8 rounded"
             onSubmit={handleSubmit}
             >
-              <div className="rounded-full mx-auto h-20 w-20 mb-6 flex flex-col items-center tracking-wide text-gray-700 text-xs font-bold justify-center bg-gray-200 border border-gray-500">
+              <div className="rounded-full mx-auto h-30 w-20 mb-6 flex flex-col items-center tracking-wide bg-white text-xs font-bold justify-center">
                 <img
-                    className="w-full h-full rounded-full"
-                    src="#"
-                    alt="Techfeed logo"
+                    className="w-full h-full bg-white rounded-full"
+                    src="/static/Techfeed_Logo.png"
+                    alt=""
                 />
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
@@ -115,8 +259,8 @@ function SignUp() {
 
                   { validateStudentName ?
                     <div>
-                    <p className="p-3 my-2 text-red-700">
-                    <em>Please fill the name</em>
+                    <p className="my-2 text-xs text-red-700">
+                    <em>* Please enter your name</em>
                     </p>
                     </div>
                     :
@@ -140,8 +284,8 @@ function SignUp() {
                   />
                   { validateRollNo ?
                     <div>
-                    <p className="p-3 my-2 text-red-700">
-                    <em>Please fill you roll number</em>
+                    <p className="my-2 text-xs text-red-700">
+                    <em>* Please enter your roll number</em>
                     </p>
                     </div>
                     :
@@ -166,8 +310,8 @@ function SignUp() {
                   />
                   { validateContactNo ?
                     <div>
-                    <p className="p-3 my-2 text-red-700">
-                    <em>Please fill your mobile number correctly</em>
+                    <p className="my-2 text-xs text-red-700">
+                    <em>* Please enter a valid contact</em>
                     </p>
                     </div>
                     :
@@ -187,7 +331,15 @@ function SignUp() {
                          onChange={handleInputChange}
                          value={inputs.emailID}
                   />
-
+                  { validateEmailID ?
+                      <div>
+                        <p className="my-2 text-xs text-red-700">
+                          <em>* Please enter a valid email</em>
+                        </p>
+                      </div>
+                      :
+                      null
+                  }
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
@@ -206,17 +358,18 @@ function SignUp() {
                   />
                   { validatePassword ?
                     <div>
-                    <p className="p-3 my-2 text-red-700">
-                    <em>Please fill the password correctly</em>
+                    <p className="my-2 text-xs text-red-700">
+                    <em>Please enter a valid password</em>
                     </p>
                     </div>
                     :
-                    <div>
-                    <p className="p-3 my-2 text-gray-500">
-                    <em>Must be 8 characters long</em>
-                    </p>
-                    </div>
+                    null
                   }
+                  <div>
+                    <p className="my-2 text-xs text-gray-500">
+                      <em>Must be 8 characters long</em>
+                    </p>
+                  </div>
                 </div>
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                   <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
@@ -233,8 +386,8 @@ function SignUp() {
                   />
                   { validateConfirmPassword ?
                     <div>
-                    <p className="p-3 my-2 text-red-700">
-                    <em>Please fill the password correctly</em>
+                    <p className="my-2 text-xs text-red-700">
+                    <em>Password doesn't match</em>
                     </p>
                     </div>
                     :
@@ -242,7 +395,7 @@ function SignUp() {
                   }
                 </div>
               </div>
-              <div className="flex flex-wrap -mx-3 mb-6">
+              <div className="flex flex-wrap -mx-3 mb-3">
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                   <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
                     College
@@ -250,13 +403,13 @@ function SignUp() {
                   <div className="relative">
                     <select
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    value={inputs.college}
+                    onChange={handleCollegeChange}
                     id="college"
                     name="college"
-                    onChange={handleCollege}>
-                      <option > </option>
-                      <option>PSG Tech</option>
-                      <option>IIT Madras</option>
-                      <option>NIT Trichy</option>
+                    >
+                      <option> </option>
+                      {colleges}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
@@ -273,28 +426,29 @@ function SignUp() {
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="department"
                     name="department"
-                    onChange={handleDepartment}
+                    value={inputs.department}
+                    onChange={handleDepartmentChange}
                     >
                           <option> </option>
-                          <option>CSE</option>
-                          <option>AMCS</option>
-                          <option>EEE</option>
+                      {departments}
+
                     </select>
                     :
-                    <select
-                    className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="department"
-                    name="department"
-                    onChange={handleCollege}
-                    >
-                          <option value="selected"> </option>
-                    </select>
+                      <label className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        <option  value="selected"> </option>
+                      </label>
                     }
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                     </div>
                   </div>
-                  <p className="text-red-500 text-xs italic whitespace-no-wrap">Please select your college</p>
+                  {!isCollegeSelected ?
+                      <p className="my-2 text-xs text-red-700">
+                        <em>* Please select the college</em>
+                      </p>
+                      :
+                      null
+                  }
                 </div>
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                   <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
@@ -305,37 +459,43 @@ function SignUp() {
                       isDepartmentSelected ?
                       <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                       id="class"
-                      name="class">
-                            <option value="selected"> </option>
-                            <option>TCS</option>
-                            <option>SS</option>
-                            <option>DS</option>
+                      name="class"
+                      value={inputs.class}
+                      onChange={handleInputChange}
+                      >
+                            <option> </option>
+                        {classes}
                       </select>
                       :
-                      <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                      id="class"
-                      name="class"
-                      onChange={handleDepartment}>
+                      <label className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                             <option value="selected"> </option>
-                      </select>
+                      </label>
                     }
 
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                     </div>
                   </div>
-                  <p className="text-red-500 text-xs italic whitespace-no-wrap">Please select your college</p>
+                  {!isDepartmentSelected ?
+                      <p className="my-2 text-xs text-red-700">
+                        <em>* Please select the department</em>
+                      </p>
+                      :
+                      null
+                  }
                 </div>
               </div>
-              <div className="flex flex-wrap -mx-3 mb-2">
-                <div className="w-1/2 md:w-1/2 ml-auto px-3 text-right">
-                  <button type="submit" className="w-full md:w-40 inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded">
+              <div className="flex flex-wrap mb-6">
+                <div className=" w-1/2 md:w-1/2 ml-auto mr-auto px-8">
+                  <button type="button" className="w-full md:w-40 inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded"
+                    onClick={handleSubmit}
+                  >
                     Submit
                   </button>
                 </div>
-                 <div className="w-1/2 md:w-1/2 ml-auto px-3 text-right">
-                 <a href="#"><em className="text-blue-500">Already have account login</em></a>
-                 </div>
+              </div>
+              <div className="flex items-center justify-center w-full md:full ">
+                <Link href="/login"><a className="text-blue-500 hover:underline ">Already have account login</a></Link>
               </div>
             </form>
           </div>

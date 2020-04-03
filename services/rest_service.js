@@ -1,11 +1,13 @@
 import fetch from 'isomorphic-unfetch';
+const frontend_url=process.env.frontend_url;
 
-export const login_call = async (url, data) => {
-  let response = await fetch(`${url}`, {
+export const login_call = async (url, data,state) => {
+  let response = await fetch(`${frontend_url}${url}`, {
     credentials: 'include',
     method: 'post',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'x-state': state
     },
     body: JSON.stringify({"data":data})
   });
@@ -13,7 +15,7 @@ export const login_call = async (url, data) => {
 };
 
 export const post = async (url, data) => {
-  let response = await fetch("/post", {
+  let response = await fetch(`${frontend_url}/post`, {
     credentials: 'include',
     headers: {
       'path': url,
@@ -26,7 +28,7 @@ export const post = async (url, data) => {
 };
 
 export const get = async(url) => {
-  let response = await fetch("/get", {
+  let response = await fetch(`${frontend_url}/get`, {
     credentials: 'include',
     headers: {
       'path': url,

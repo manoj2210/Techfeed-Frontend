@@ -11,10 +11,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 const oauth_url = process.env.oauth_url;
 const TOKEN_STORAGE_KEY = process.env.cookie_name;
-const backendUrl =
-    process.env.NODE_ENV === 'production'
-        ? process.env.dev_backend_api
-        : process.env.backend_url;
+const backendUrl = process.env.backend_url;
 
 app.prepare().then(() => {
   const server = express();
@@ -33,7 +30,7 @@ app.prepare().then(() => {
     const auth = req.cookies[TOKEN_STORAGE_KEY];
     if (auth) {
       if (map && map[auth]) {
-        let d = map[auth].access_token;
+        let d = map[auth].token;
         let response = await fetch(`${backendUrl}${url}`, {
           crossDomain: true,
           credentials: 'include',
@@ -66,20 +63,21 @@ app.prepare().then(() => {
   });
 
   server.post('/post', async (req, res) => {
-    let url = req.headers.path
+    let url = req.headers.path;
     const auth = req.cookies[TOKEN_STORAGE_KEY];
     if (auth) {
       if (map && map[auth]) {
-        let d = map[auth].access_token;
+        let d = map[auth].token;
         let response = await fetch(`${backendUrl}${url}`, {
           crossDomain: true,
           credentials: 'include',
           headers: {
             "Authorization": `Bearer ${d}`,
+            'Content-Type': 'application/json'
           },
           method: 'post',
           body: JSON.stringify(req.body)
-        })
+        });
         let resp = await response.json();
         res.status(response.status);
         res.send(resp);
@@ -105,36 +103,33 @@ app.prepare().then(() => {
 
   server.post('/oauth/token', async (req, res) => {
     map = req.session;
+    let state=req.get('x-state');
     let bodyData = await JSON.stringify(req.body.data);
-    bodyData = bodyData.slice(1, -1);
-
-    let response = await fetch(`${oauth_url}/oauth/token`, {
+    let response = await fetch(`${oauth_url}/oauth/token/${state}`, {
       credentials: 'include',
       method: 'post',
       headers: {
-        Authorization: 'Basic aW50ZXJuYWw6aW50ZXJuYWw=',
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/json'
       },
       body: bodyData
     });
 
     let resp = await response.json();
     // console.log(resp);
-    if (resp.error && !resp.access_token) {
+    if (resp.error && !resp.token) {
       res.status(401);
       res.send(resp);
     }
     else {
-      let u_id=uuidv5('http://example.com/hello', uuidv5.URL);
+      let u_id=uuidv5('http://techfeed.in/login', uuidv5.URL);
       map[u_id] = resp;
-      res.status(200);
       res.cookie(TOKEN_STORAGE_KEY, u_id);
-      res.send(resp);
+      res.status(200).send({"status":"Success"});
     }
   });
 
   server.all('*', (req, res) => {
-    if (req.path == '/ping') {
+    if (req.path ==='/ping') {
       res.send('pong');
     }
     else {
