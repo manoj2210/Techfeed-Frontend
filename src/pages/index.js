@@ -1,9 +1,8 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Layout from '../components/layout';
 
 function Techfeed(){
-  return <Layout>
 
-  </Layout>
+  return <Layout sideBar={true}/>
 }
 export default Techfeed;

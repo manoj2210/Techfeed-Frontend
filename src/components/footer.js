@@ -15,15 +15,15 @@ function Footer() {
                         <div className="flex relative inline-block float-right">
                             <div className="ml-10 relative flex items-baseline">
                                 <li>
-                                    <a className="inline-block text-gray-600 no-underline hover:text-gray-100 hover:text-underline p-5 py-1"
+                                    <a className="inline-block text-gray-600 whitespace-no-wrap no-underline hover:text-gray-800 hover:text-underline p-5 py-1"
                                        href="#">Github</a>
                                 </li>
                                 <li>
-                                    <a className="inline-block text-gray-600 no-underline hover:text-gray-100 hover:text-underline p-5 py-1"
+                                    <a className="inline-block text-gray-600 whitespace-no-wrap no-underline hover:text-gray-800 hover:text-underline p-5 py-1"
                                        href="#">Linked in</a>
                                 </li>
                                 <li>
-                                    <a className="inline-block text-gray-600 no-underline hover:text-gray-100 hover:text-underline p-5 py-1"
+                                    <a className="inline-block text-gray-600 whitespace-no-wrap no-underline hover:text-gray-800 hover:text-underline p-5 py-1"
                                        href="#">Twitter</a>
                                 </li>
                             </div>
