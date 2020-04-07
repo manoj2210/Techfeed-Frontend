@@ -12,6 +12,7 @@ function Login() {
    };
    const [inputs, setInputs] = useState(initialValues);
    const [error, setError] = useState('');
+   const [alert,setAlert]=useState('');
    const [colleges,setColleges]=useState([]);
 
    const handleSubmit = async e => {
@@ -19,15 +20,15 @@ function Login() {
       const res = await login_call('/oauth/token',inputs,'student');
       if (!!res.error){
          if(res.status===401) {
-            setError(res.message);
+            handleError(res.message);
          }
          else {
             //Push to Sign Up - No users
-            setError(res.message);
+            handleError(res.message);
          }
       }
       else {
-         console.log("Login Success");
+         handleAlert("Login Success");
       }
    };
 
@@ -42,7 +43,7 @@ function Login() {
          if(!r.error){
             await mapColleges(r);
          }else{
-            setError(r.message);
+            handleError(r.message);
          }
       });
    }, []);
@@ -60,6 +61,15 @@ function Login() {
          [e.target.name]: e.target.value
       });
    };
+   const handleError = (e) => {
+      setError(e);
+      setAlert('');
+   };
+
+   const handleAlert = (e) => {
+      setError('');
+      setAlert(e);
+   };
    return (
        <Layout>
           <div className="mx-auto px-4 sm:px-8 min-h-screen">
@@ -69,6 +79,9 @@ function Login() {
                 </div>
                 {error ? (
                     <p className="p-3 my-2 text-red-700 bg-red-200">Error: {error}</p>
+                ) : null}
+                {alert ? (
+                    <p className="p-3 my-2 text-green-700 bg-green-200">{alert}</p>
                 ) : null}
                 <form
                     className="bg-white shadow-md rounded px-8 py-6 pb-8 my-4"

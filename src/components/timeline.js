@@ -6,6 +6,7 @@ export default function Timeline(props) {
 
     let data=props.data.map((data,index)=>{
         return (<VerticalTimelineElement
+            key={index}
             className="vertical-timeline-element--work"
             date={<span className="mx-3 font-medium text-xl px-5  text-black">{data.time}</span>}
             iconStyle={{ background: 'rgb(71, 75, 84)' }}

@@ -15,13 +15,13 @@ function SignUp() {
     contactNo: '',
     password: '',
     confirmPassword: '',
-    error:''
   };
 
   const router = useRouter();
   //Inputs
   const [inputs, setInputs] = useState(initialValues);
   const [error, setError] = useState('');
+  const [alert,setAlert]=useState('');
   const [colleges,setColleges]=useState([]);
   const [departments,setDepartments]=useState([]);
   const [classes,setClasses]=useState([]);
@@ -47,7 +47,7 @@ function SignUp() {
       if(!r.error){
         await mapColleges(r);
       }else{
-        setError(r.message);
+        handleError(r.message);
       }
     });
   }, []);
@@ -94,11 +94,11 @@ function SignUp() {
         await mapDepartments(r);
         setStateCollege(true);
         setStateDepartment(false);
-        setError(null);
+        handleError(null);
       }else{
         setStateCollege(false);
         setStateDepartment(false);
-        setError(r.message);
+        handleError(r.message);
       }
     });
   }
@@ -129,9 +129,9 @@ function SignUp() {
       if(!r.error){
         await mapClasses(r);
         setStateDepartment(true);
-        setError(null);
+        handleError(null);
       }else{
-        setError(r.message);
+        handleError(r.message);
         setStateDepartment(false);
       }
     });
@@ -215,10 +215,20 @@ function SignUp() {
         if(!r.error){
           router.push('/login');
         }else{
-          setError(r.message);
+          handleError(r.message);
         }
       });
     }
+  };
+
+  const handleError = (e) => {
+    setError(e);
+    setAlert('');
+  };
+
+  const handleAlert = (e) => {
+    setError('');
+    setAlert(e);
   };
 
 
@@ -231,6 +241,9 @@ function SignUp() {
             </div>
             {error ? (
                 <p className="p-3 my-2 text-red-700 bg-red-200">Error: {error}</p>
+            ) : null}
+            {alert ? (
+                <p className="p-3 my-2 text-green-700 bg-green-200">{alert}</p>
             ) : null}
             <form className="w-full max-w-lg mx-auto my-4 bg-white p-8 rounded"
             onSubmit={handleSubmit}

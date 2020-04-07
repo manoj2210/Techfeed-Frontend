@@ -34,7 +34,7 @@ const pages = [
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>
         </svg>,
-        path: "/signUp",
+        path: "/profile",
     },
 ];
 
@@ -71,7 +71,7 @@ function Layout(props) {
         <div className="flex flex-col min-h-screen font-sans leading-normal tracking-normal" suppressHydrationWarning={true}>
             <Head>
                 <title>TechFeed</title>
-                <link rel="shortcut icon" href="/static/favicon.ico" />
+                <link rel="shortcut icon" href="/static/Techfeed_Logo.png" />
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
             {data}

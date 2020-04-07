@@ -80,7 +80,11 @@ app.prepare().then(() => {
         });
         let resp = await response.json();
         res.status(response.status);
-        res.send(resp);
+        if(response.status === 212){
+          map[auth].token=resp.token;
+          res.status(200);
+        }
+        res.send({'status':'Success'});
       }
       else {
         res.status(401);
