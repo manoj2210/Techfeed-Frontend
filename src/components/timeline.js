@@ -11,10 +11,12 @@ export default function Timeline(props) {
             date={<span className="mx-3 font-medium text-xl px-5  text-black">{data.time}</span>}
             iconStyle={{ background: 'rgb(71, 75, 84)' }}
         >
-            <div className="flex justify-center items-center">
+            <div className="flex w-full justify-center items-center">
+                <div className="flex w-1/3 justify-center items-center">
                 <a className="px-2 py-1 bg-gray-700 hover:bg-gray-800 text-xl text-green-100 rounded" href="#">{data.courseCode}</a>
+                </div>
             </div>
-            <div className="py-4">
+            <div>
                 <p className="text-sm text-gray-700 text-center font-light">{data.subject}</p>
             </div>
             <div className="flex justify-between items-center mt-4">
