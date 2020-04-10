@@ -7,14 +7,9 @@ function Profile(props) {
     const initialValues = {
         name: '',
         rollNo: '',
-        // class: '',
-        // department: '',
         college: '',
         emailID: '',
         contactNo: '',
-        // github:'',
-        // linkedIn:'',
-        // instaGram:''
     };
 
     const router = useRouter();
@@ -64,7 +59,7 @@ function Profile(props) {
                     if (!r.error) {
                         get(`/getData/userDetails`).then(res=> {
                                 if (!res.error) {
-                                    setInputs(res);
+                                    setInputs(res.details);
                                 }
                                 else{
                                     handleError(res.message);
@@ -189,10 +184,7 @@ function Profile(props) {
                             <label className="appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 "
                             >{inputs.emailID}</label>
                         </div>
-                    </div>
-
-                    <div className="flex flex-wrap -mx-3 mb-3">
-                        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                                 College
                             </label>
