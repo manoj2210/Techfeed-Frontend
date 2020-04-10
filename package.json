@@ -19,6 +19,7 @@
     "next": "9.2.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "react-super-responsive-table": "^5.1.1",
     "react-vertical-timeline-component": "^2.5.0",
     "uuid": "^7.0.2"
   },
