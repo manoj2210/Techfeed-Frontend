@@ -5,7 +5,7 @@ import Timeline from "../components/timeline";
 
 const data=[
     {
-        subject:"Operating System",
+        subject:"Operating System ",
         class:"M-204",
         courseCode:"18XT45",
         time:"8:30-9:20",
