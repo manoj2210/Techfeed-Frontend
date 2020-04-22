@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Link from "next/link";
 import {post,get} from "../../services/rest_service";
 import {useRouter} from "next/router";
+import {Table, Tbody, Th, Thead, Tr} from "react-super-responsive-table";
 
 function Profile(props) {
     const initialValues = {
@@ -20,11 +21,7 @@ function Profile(props) {
 
     const validationValues={
         name: false,
-        // emailID: false,
         contactNo: false,
-        // github:false,
-        // linkedIn:false,
-        // instaGram:false,
     };
     //Validation
     const [validation,setValidation] = useState(validationValues);
@@ -89,6 +86,7 @@ function Profile(props) {
     useEffect(() => {
         if (!props.res.error) {
             setInputs(props.res.details);
+
         }
         else{
             handleError(props.res.message);

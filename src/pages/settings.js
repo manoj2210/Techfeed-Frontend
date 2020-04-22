@@ -1,22 +1,22 @@
-import React, {useEffect,useState } from 'react';
+import React,{useEffect,useState} from 'react';
 import Layout from '../components/layout';
-import {get} from "../../services/rest_service";
-import StudentProfile from "../components/profileStudent"
-import TeacherProfile from "../components/profileTeacher"
 import {useRouter} from "next/router";
+import {get} from "../../services/rest_service";
+import SettingsStudent from "../components/settingsStudent";
+import SettingsTeacher from "../components/settingsTeacher";
 
-
-function Profile() {
+function Settings(){
     const router = useRouter();
     const [data,setData]=useState('');
     useEffect(() => {
         get(`/getData/userDetails`).then(async res=> {
                 if(!res.error){
                     if(res.isStudent){
-                        setData(<StudentProfile res={res}/>);
+                        console.log("Hi");
+                        setData(<SettingsStudent res={res}/>);
                     }
                     else {
-                        setData(<TeacherProfile res={res}/>);
+                        setData(<SettingsTeacher res={res}/>);
                     }
                 }
                 else {
@@ -26,12 +26,9 @@ function Profile() {
             }
         );
     }, []);
-    return (
-        <Layout sideBar={true}>
-            {data}
-        </Layout>
 
-    );
+    return <Layout sideBar={true}>
+        {data}
+    </Layout>
 }
-
-export default Profile;
+export default Settings;

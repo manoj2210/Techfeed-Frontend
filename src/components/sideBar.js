@@ -4,7 +4,11 @@ import {useRouter} from "next/router";
 function Sidebar (props) {
     const router = useRouter();
         let Button=({page})=>{
-          if(page.path===router.pathname){
+            let pat=router.pathname;
+            if(router.pathname=== '/chapters' || router.pathname ==='/materials'){
+                pat='/resources';
+            }
+          if(page.path===pat){
               return (
                   <div>
                   <button onClick={function () {router.push(page.path)}}

@@ -25,23 +25,46 @@ app.prepare().then(() => {
   server.use(bodyParser.json());
   server.use(cookieParser());
 
+
   server.get('/get', async (req, res) => {
     let url = req.headers.path;
     const auth = req.cookies[TOKEN_STORAGE_KEY];
     if (auth) {
       if (map && map[auth]) {
         let d = map[auth].token;
+        let r= map[auth].refreshToken;
         let response = await fetch(`${backendUrl}${url}`, {
           crossDomain: true,
           credentials: 'include',
           headers: {
             "Authorization": `Bearer ${d}`,
+            "x-refresh-token": r
           },
           method: 'get',
         });
         let resp = await response.json();
-        res.status(response.status);
-        res.send(resp);
+        if(response.status === 203){
+          map[auth]=resp;
+          //Resend req
+          let d = map[auth].token;
+          let r= map[auth].refreshToken;
+          let response = await fetch(`${backendUrl}${url}`, {
+            crossDomain: true,
+            credentials: 'include',
+            headers: {
+              "Authorization": `Bearer ${d}`,
+              "x-refresh-token": r
+            },
+            method: 'get',
+          });
+          let resp = await response.json();
+          res.status(response.status);
+          res.send(resp);
+        }
+        else {
+          res.status(response.status);
+          res.send(resp);
+        }
       }
       else {
         res.status(401);
@@ -68,23 +91,55 @@ app.prepare().then(() => {
     if (auth) {
       if (map && map[auth]) {
         let d = map[auth].token;
+        let r= map[auth].refreshToken;
         let response = await fetch(`${backendUrl}${url}`, {
           crossDomain: true,
           credentials: 'include',
           headers: {
             "Authorization": `Bearer ${d}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "x-refresh-token": r
           },
           method: 'post',
           body: JSON.stringify(req.body)
         });
         let resp = await response.json();
-        res.status(response.status);
         if(response.status === 212){
           map[auth].token=resp.token;
           res.status(200);
+          res.send({'status': 'Success'});
         }
-        res.send({'status':'Success'});
+        else if(response.status === 203){
+          map[auth]=resp;
+          //Resend req
+          let d = map[auth].token;
+          let r= map[auth].refreshToken;
+          let response = await fetch(`${backendUrl}${url}`, {
+            crossDomain: true,
+            credentials: 'include',
+            headers: {
+              "Authorization": `Bearer ${d}`,
+              'Content-Type': 'application/json',
+              "x-refresh-token": r
+            },
+            method: 'post',
+            body: JSON.stringify(req.body)
+          });
+          let resp = await response.json();
+          if(response.status === 212){
+            map[auth].token=resp.token;
+            res.status(200);
+            res.send({'status': 'Success'});
+          }
+          else {
+            res.status(response.status);
+            res.send(resp);
+          }
+        }
+        else {
+          res.status(response.status);
+          res.send(resp);
+        }
       }
       else {
         res.status(401);
@@ -128,6 +183,7 @@ app.prepare().then(() => {
       let u_id=uuidv5('http://techfeed.in/login', uuidv5.URL);
       map[u_id] = resp;
       res.cookie(TOKEN_STORAGE_KEY, u_id);
+      console.log(resp);
       res.status(200).send({"status":"Success"});
     }
   });

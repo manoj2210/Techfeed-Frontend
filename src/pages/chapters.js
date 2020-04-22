@@ -1,16 +1,37 @@
 import React from 'react';
 import Layout from '../components/layout';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
+import {post} from "../../services/rest_service";
+import Link from "next/link";
 
 export default function Chapters(props) {
+    let data;
+    if(props.serverRender.length>0){
+        data = props.serverRender.map((dat, index) => {
+            return <Tr className="mb-5  mt-2 border-b border-gray-200">
+                <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-800 whitespace-no-wrap">{dat.number}</p>
+                </Td>
+                <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p className="text-gray-800 ">{dat.name}</p>
+                </Td>
+                <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm ">
+                    <Link href={{ pathname: '/materials', query: { cid: props.cid, name: dat.name }}} >
+                        <button type='button' className="w-full inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded">
+                            View
+                        </button>
+                    </Link>
+                </Td>
+            </Tr>
+        });
+    }
     return (
         <Layout sideBar={true}>
             <div className="mx-auto px-4 sm:px-8 min-h-screen">
                 <div className="py-8">
                     <div className="sm:flex sm:items-center sm:px-4 xl:flex-1 xl:justify-between">
                         <div className="py-4 text-center lg:text-left">
-                            <h2 className="text-xl font-semibold leading-tight text-gray-900">Networks and Data Communication</h2>
+                            <h2 className="text-xl font-semibold leading-tight text-gray-900">{props.cid}</h2>
                         </div>
                     </div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -37,36 +58,7 @@ export default function Chapters(props) {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    <Tr className="mb-5  mt-2 border-b border-gray-200">
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-800 whitespace-no-wrap">01</p>
-                                        </Td>
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-800 ">Data Communication</p>
-                                        </Td>
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
-                                            <button type="button"
-                                                    className="w-full inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded"
-                                            >
-                                                View
-                                            </button>
-                                        </Td>
-                                    </Tr>
-                                    <Tr className="mb-5 border-b border-gray-200">
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-800 whitespace-no-wrap">02</p>
-                                        </Td>
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-800 ">Networks</p>
-                                        </Td>
-                                        <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
-                                            <button type="button"
-                                                    className="w-full inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded"
-                                            >
-                                                View
-                                            </button>
-                                        </Td>
-                                    </Tr>
+                                    {data}
                                 </Tbody>
                             </Table>
                         </div>
@@ -77,3 +69,7 @@ export default function Chapters(props) {
 
     );
 }
+
+Chapters.getInitialProps = async ({query}) => {
+    return {serverRender: await post('/getData/chapters',JSON.stringify({cid: query.cid})),cid:query.cid};
+};

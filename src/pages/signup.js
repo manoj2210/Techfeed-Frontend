@@ -2,7 +2,6 @@ import React, { useState,useEffect } from 'react';
 import StudentSignup from '../components/studentSignup';
 import TeacherSignup from '../components/teacherSignup';
 import Layout from '../components/layout';
-import Link from "next/link";
 import fetch from 'isomorphic-unfetch'
 import {useRouter} from "next/router";
 

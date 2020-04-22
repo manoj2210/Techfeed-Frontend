@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {login_call} from '../../services/rest_service';
+import {get, login_call} from '../../services/rest_service';
 import Layout from '../components/layout';
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
 import {useRouter} from "next/router";
 
-function Login() {
+function Login(props) {
    const router = useRouter();
 
    const styles = ["cursor-pointer bg-gray-400 hover:bg-gray-300  rounded focus:outline-none focus:shadow-outline m-0 flex-1 text-center w-1/2 transition duration-300", "cursor-pointer border-none bg-gray m-0 flex-1 text-center w-1/2 transition duration-300"];
@@ -58,20 +58,15 @@ function Login() {
       }
    };
 
+   const getColleges=(async(r)=>{
+      if(!r.error){
+         await mapColleges(r);
+      }else{
+         handleError(r.message);
+      }
+   });
    useEffect(() => {
-      fetch(`${process.env.backend_url}/base/getCollege`,{
-         crossDomain: true,
-         credentials: 'include',
-         method: 'get',
-      }).then(res=> {
-         return res.json();
-      }).then(async(r)=>{
-         if(!r.error){
-            await mapColleges(r);
-         }else{
-            handleError(r.message);
-         }
-      });
+      getColleges(props.res).then().catch();
    }, []);
 
    const mapColleges=e=>{
@@ -216,5 +211,15 @@ function Login() {
        </Layout>
    );
 }
+
+Login.getInitialProps=async ctx=>{
+   let resp=await fetch(`${process.env.backend_url}/base/getCollege`,{
+      crossDomain: true,
+      credentials: 'include',
+      method: 'get',
+   });
+   let json=await resp.json();
+   return {res: json};
+};
 
 export default Login;

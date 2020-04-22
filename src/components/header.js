@@ -31,7 +31,9 @@ function Header(props) {
                         </div>
                 </a>
             </div>
-            <div className="w-1/3">
+            <div className="w-1/3 container mx-5 flex flex-wrap justify-end  my-2 md:pb-0">
+                <Link href="/login" >
+                    Logout</Link>
             </div>
         </header>
 
