@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "builds": [{ "src": "server.js", "use": "@now/node-server" }],
+  "routes": [
+    {
+      "src": "/get",
+      "dest": "/server.js",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/post",
+      "dest": "/server.js",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/oauth/token",
+      "dest": "/server.js",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/login",
+      "dest": "/server.js",
+      "methods": ["GET"]
+    }
+  ],
+  "env": {
+    "oauth_url":"https://rocky-temple-29753.herokuapp.com",
+    "cookie_name":"x-techfeed",
+    "backend_url":"https://rocky-temple-29753.herokuapp.com",
+    "frontend_url":"https://techfeed-frontend.now.sh/"
+  }
+}
