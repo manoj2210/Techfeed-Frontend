@@ -1,5 +1,4 @@
 import React, {useEffect,useState } from 'react';
-import Layout from './layout';
 import {get, post} from "../../services/rest_service";
 import {useRouter} from "next/router";
 import {Table, Tbody, Td, Th, Thead, Tr} from "react-super-responsive-table";
@@ -30,21 +29,39 @@ function SettingsTeacher() {
     useEffect(() => {
         get('/getData/teaches').then(res => {
             if (!res.error) {
-                setSelCourse(res[0].cid);
-                mapData(res);
+                if(res.length>0) {
+                    mapData(res);
+                }
                 get('/getData/base/courses').then(r=>{
                     if(!r.error){
-                        let arr=[];
-                        for(let x of r){
-                            arr.push(<option>{x.cid}</option>);
+                        if(r.length>0) {
+                            setSelCourse(r[0].cid);
+                            let arr = [];
+                            for (let x of r) {
+                                arr.push(<option>{x.cid}</option>);
+                            }
+                            setCourses(arr);
                         }
-                        setCourses(arr);
                     }else {
-                        handleError(r.message);
+                        if(r.status === 401){
+                            handleError('Please Login');
+                            setTimeout(async function (){
+                                await router.push("/login")
+                            },3000);
+                        }else {
+                            handleError(r.message);
+                        }
                     }
                 })
             }else {
-                handleError(res.message);
+                if(res.status === 401){
+                    handleError('Please Login');
+                    setTimeout(async function (){
+                        await router.push("/login")
+                    },3000);
+                }else {
+                    handleError(res.message);
+                }
             }
         });
     },[]);
@@ -74,7 +91,14 @@ function SettingsTeacher() {
                         }
                     });
                 }else {
-                    handleError(r.message);
+                    if(r.status === 401){
+                        handleError('Please Login');
+                        setTimeout(async function (){
+                            await router.push("/login")
+                        },3000);
+                    }else {
+                        handleError(r.message);
+                    }
                 }
             }
         )
@@ -149,6 +173,9 @@ function SettingsTeacher() {
                     <form className="w-full max-w-lg mx-auto my-4 bg-white p-4 rounded"
                     >
                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                            <div className="pb-4 text-center lg:text-left">
+                                <h2 className="text-xl leading-tight text-gray-900">Subscribed Courses</h2>
+                            </div>
                             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
                                 <Table className="min-w-full leading-normal">
                                     <Thead>

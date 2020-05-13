@@ -2,7 +2,6 @@ import React, { useState,useEffect } from 'react';
 import Link from "next/link";
 import {post,get} from "../../services/rest_service";
 import {useRouter} from "next/router";
-import {Table, Tbody, Th, Thead, Tr} from "react-super-responsive-table";
 
 function Profile(props) {
     const initialValues = {
@@ -59,13 +58,30 @@ function Profile(props) {
                                     setInputs(res.details);
                                 }
                                 else{
-                                    handleError(res.message);
+                                    if(res.status === 401){
+                                        handleError('Please Login');
+                                        setTimeout(async function (){
+                                            await router.push("/login")
+                                        },3000);
+                                    }else {
+                                        handleError(res.message);
+                                    }
                                 }
                             }
                         );
                         handleAlert("Successfully Updated");
+                        setTimeout(async function (){
+                            handleAlert('');
+                        },3000);
                     } else {
-                        handleError(r.message);
+                        if(r.status === 401){
+                            handleError('Please Login');
+                            setTimeout(async function (){
+                                await router.push("/login")
+                            },3000);
+                        }else {
+                            handleError(r.message);
+                        }
                     }
                 }
             );
@@ -89,7 +105,14 @@ function Profile(props) {
 
         }
         else{
-            handleError(props.res.message);
+            if(props.res.status === 401){
+                handleError('Please Login');
+                setTimeout(async function (){
+                    await router.push("/login")
+                },3000);
+            }else {
+                handleError(props.res.message);
+            }
         }
     }, []);
 
