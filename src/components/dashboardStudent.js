@@ -1,8 +1,10 @@
 import React ,{useState,useEffect} from 'react';
 import {get,post} from "../../services/rest_service";
 import {Table, Td, Th, Thead, Tr} from "react-super-responsive-table";
+import {useRouter} from "next/router";
 
 function StudentDashboard(){
+    const router=useRouter();
 
     const [isInputSelected,setInputSelected]=useState(false);
     const [announcement,setAnnouncement]=useState("");
@@ -22,8 +24,18 @@ function StudentDashboard(){
         get('/getData/announcements').then(res=>{
             if(!res.error){
                 mapData(res);
+                if(res.length===0){
+                    handleError('No Announcements are available')
+                }
             }else {
-                handleError(res.message);
+                if (res.status === 401) {
+                    handleError('Please Login');
+                    setTimeout(async function () {
+                        await router.push("/login")
+                    }, 3000);
+                } else {
+                    handleError(res.message);
+                }
             }
         })
     }, []);
@@ -81,12 +93,6 @@ function StudentDashboard(){
                 ) : null}
                 <div className="mt-6">
                     <p className="m-6 inline p-2 text-xl text-gray-600">Announcements</p>
-                    {/*<button*/}
-                    {/*    onClick={handleClick}*/}
-                    {/*    type="button"*/}
-                    {/*    className="border-solid border-4 border-orange-400 bg-orange-400 p-1 text-white font-medium rounded-md hover:text-gray-600">*/}
-                    {/*    add*/}
-                    {/*</button>*/}
                 </div>
                 {
                     isInputSelected ?

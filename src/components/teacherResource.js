@@ -109,7 +109,7 @@ function TeacherResource(){
             } else {
               handleError(r.message);
             }
-    }
+          }
         }
     )
   }

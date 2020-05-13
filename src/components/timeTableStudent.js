@@ -26,9 +26,12 @@ function TimeTableStudent(){
             if(!r.error){
                 setData(r.timeTable[currentDay]);
             }else{
-                if(r.status === 401)
-                     router.push('/login');
-                else {
+                if (r.status === 401) {
+                    handleError('Please Login');
+                    setTimeout(async function () {
+                        await router.push("/login")
+                    }, 3000);
+                } else {
                     handleError(r.message);
                 }
             }

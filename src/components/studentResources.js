@@ -3,11 +3,13 @@ import Layout from '../components/layout';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import {get} from "../../services/rest_service";
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 const {useEffect} = require("react");
 
  function StudentResources(props) {
 
+     const router = useRouter();
      const [data,setData]=useState('');
      const [error, setError] = useState('');
      const [alert,setAlert]= useState('');
@@ -28,7 +30,14 @@ const {useEffect} = require("react");
                     map(r);
                 }
                 else {
-                    handleError(r.error);
+                    if (r.status === 401) {
+                        handleError('Please Login');
+                        setTimeout(async function () {
+                            await router.push("/login")
+                        }, 3000);
+                    } else {
+                        handleError(r.message);
+                    }
                 }
             }
         );

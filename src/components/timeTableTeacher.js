@@ -1,7 +1,6 @@
-import React,{useEffect,useState} from 'react';
+import React from 'react';
 import Timeline from "../components/timeline";
 import {get} from '../../services/rest_service';
-import {useRouter} from "next/router";
 
 
 function TimeTableTeacher(props){

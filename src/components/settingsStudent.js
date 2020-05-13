@@ -32,7 +32,14 @@ function SettingsStudent() {
                 console.log(r);
                 mapData(r);
             }else {
-                handleError(r.message);
+                if (r.status === 401) {
+                    handleError('Please Login');
+                    setTimeout(async function () {
+                        await router.push("/login")
+                    }, 3000);
+                } else {
+                    handleError(r.message);
+                }
             }
         })
 

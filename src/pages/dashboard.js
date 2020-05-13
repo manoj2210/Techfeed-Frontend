@@ -19,8 +19,11 @@ function Dashboard(){
                     }
                 }
                 else {
-                    console.log("Unauthorised",res);
-                    await router.push('/login');
+                    if (res.status === 401) {
+                        setTimeout(async function () {
+                            await router.push("/login")
+                        }, 100);
+                    }
                 }
             }
         );

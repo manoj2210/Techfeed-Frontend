@@ -1,16 +1,25 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../components/layout';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import {post} from "../../services/rest_service";
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 export default function Chapters(props) {
     let data;
+    const router=useRouter();
+    useEffect(() => {
+        if (!!props.serverRender.error) {
+            router.push("/resources").then().catch();
+        }
+    }, []);
+
+
     if(props.serverRender.length>0){
         data = props.serverRender.map((dat, index) => {
             return <Tr className="mb-5  mt-2 border-b border-gray-200">
                 <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-800 whitespace-no-wrap">{dat.number}</p>
+                    <p className="text-gray-800 whitespace-no-wrap">CO {dat.number}</p>
                 </Td>
                 <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-800 ">{dat.name}</p>
@@ -42,7 +51,7 @@ export default function Chapters(props) {
                                         <Th
                                             className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                                         >
-                                            <p className="text-gray-600 whitespace-no-wrap">Chapter Number</p>
+                                            <p className="text-gray-600 whitespace-no-wrap">Course Outcome</p>
                                         </Th>
                                         <Th
                                             className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"

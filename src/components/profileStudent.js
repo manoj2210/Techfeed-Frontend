@@ -78,8 +78,18 @@ function Profile(props) {
                             }
                         );
                         handleAlert("Successfully Updated");
+                        setTimeout(function () {
+                            handleAlert("");
+                        },3000)
                     } else {
-                        handleError(r.message);
+                        if (r.status === 401) {
+                            handleError('Please Login');
+                            setTimeout(async function () {
+                                await router.push("/login")
+                            }, 3000);
+                        } else {
+                            handleError(r.message);
+                        }
                     }
                 }
             );

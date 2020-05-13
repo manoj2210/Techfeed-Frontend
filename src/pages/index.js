@@ -1,29 +1,24 @@
 import React,{useEffect} from 'react';
-import Layout from '../components/layout';
 import {useRouter} from "next/router";
+import Layout from "../components/layout";
 import {get} from "../../services/rest_service";
 
-function Index(props){
+function Index(){
   const router = useRouter();
 
   useEffect( () => {
-      get(`/getData/userDetails`).then(res=>{
-      if(!res.error){
-           router.push('/dashboard');
-      }
-      else {
-          console.log(res);
-           router.push('/login');
-      }}
-      )
+      get(`/getData/userDetails`).then(async res => {
+              if (!res.status) {
+                  await router.push('/dashboard');
+              } else {
+                  await router.push('/login');
+              }
+          }
+      );
   }, []);
 
-  return <div/>
+  return <Layout/>
 }
-
-Index.getInitialProps=async ctx=>{
-    return {res: await get(`/getData/userDetails`)};
-};
 
 export default Index;
 

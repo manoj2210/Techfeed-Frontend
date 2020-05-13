@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../components/layout';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import {post} from "../../services/rest_service";
+import {useRouter} from "next/router";
 
 function Materials(props) {
     let data;
+    const router=useRouter();
+    useEffect(() => {
+        if (!!props.serverRender.error) {
+                router.push("/resources").then().catch();
+        }
+    }, []);
+
     if(props.serverRender.length>0){
         data = props.serverRender.map((dat, index) => {
             return <Tr className="mb-5  mt-2 border-b border-gray-200">
@@ -12,13 +20,15 @@ function Materials(props) {
                     <p className="text-gray-800 whitespace-no-wrap">{dat.matName}</p>
                 </Td>
                 <Td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <button type="button"
-                            className=" w-24 inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded"
-                    >
-                        Download
-                    </button>
+                    <a href={dat.link} target="_blank">
+                        <button type="button"
+                                className=" w-24 inline-block bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded"
+                        >
+                            Download
+                        </button>
+                    </a>
                 </Td>
-            </Tr>
+            </Tr>;
         });
     }
 
