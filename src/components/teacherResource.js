@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {get} from "../../services/rest_service";
+import {get, post} from "../../services/rest_service";
 import {useRouter} from "next/router";
 
 function TeacherResource(){
@@ -84,6 +84,34 @@ function TeacherResource(){
 
   const handleSubmit=(e)=>{
     console.log(link,matName,chapName,courses,course,unit);
+    if(link===''||matName===''||chapName===''||course===''||unit===''){
+      handleError('Please Enter All fields');
+      return
+    }
+    post('/update/materials',JSON.stringify({
+      link:link,
+      matName:matName,
+      chapName:chapName,
+      cid:course,
+      co:unit === 'Entire book' ? 0 : parseInt(unit)
+    })).then(r =>{
+          if(!r.error) {
+            handleAlert('Successfully Added');
+            setTimeout( function () {
+              handleAlert('');
+            }, 3000);
+          } else {
+            if (r.status === 401) {
+              handleError('Please Login');
+              setTimeout(async function () {
+                await router.push("/login")
+              }, 3000);
+            } else {
+              handleError(r.message);
+            }
+    }
+        }
+    )
   }
   return (
       <div className="mx-auto px-4 sm:px-4 min-h-screen">
